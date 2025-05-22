@@ -1,69 +1,60 @@
 setInterval(function relog() { 
     let rel = document.getElementById('relogio01');
     let data = new Date();
-    
-    // Adiciona 23 segundos
+
+    // Adiciona 18 segundos artificialmente
     data.setSeconds(data.getSeconds() + 18);
-    
-    // Determina o horário de verão na França
-    let ano = data.getUTCFullYear();
-    let inicioVerao = new Date(ano, 2, 31); // Último domingo de março
-    while (inicioVerao.getDay() !== 0) inicioVerao.setDate(inicioVerao.getDate() - 1);
-    let fimVerao = new Date(ano, 9, 31); // Último domingo de outubro
-    while (fimVerao.getDay() !== 0) fimVerao.setDate(fimVerao.getDate() - 1);
-    
-    let fusoHorario = (data >= inicioVerao && data < fimVerao) ? 3 : 2; // UTC+3 no horário de verão, UTC+2 no padrão
-    data.setUTCHours(data.getUTCHours() + fusoHorario - 1); // Redução de 1 hora
-    
-    let h = data.getUTCHours().toString().padStart(2, '0');
-    let m = data.getUTCMinutes().toString().padStart(2, '0');
-    let s = data.getUTCSeconds().toString().padStart(2, '0');
-    
+
+    // Converte para horário da Índia (UTC+5:30)
+    let offsetIST = 5.5 * 60; // minutos
+    data = new Date(data.getTime() + offsetIST * 60 * 1000);
+
+    // Formata hora, minuto e segundo com 2 dígitos
+    let h = data.getHours().toString().padStart(2, '0');
+    let m = data.getMinutes().toString().padStart(2, '0');
+    let s = data.getSeconds().toString().padStart(2, '0');
+
     rel.innerHTML = `${h}:${m}:${s}`;
 }, 1000);
 
-// Exibição da data em francês
+
+// Exibe a data em híndi
 function exibirDataAtualizada() {
-    let meses = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-    let semanas = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-    
+    let meses = ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"];
+    let semanas = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
+
     let data = new Date();
-    // Adiciona 23 segundos
     data.setSeconds(data.getSeconds() + 18);
-    
-    let ano = data.getUTCFullYear();
-    let inicioVerao = new Date(ano, 2, 31);
-    while (inicioVerao.getDay() !== 0) inicioVerao.setDate(inicioVerao.getDate() - 1);
-    let fimVerao = new Date(ano, 9, 31);
-    while (fimVerao.getDay() !== 0) fimVerao.setDate(fimVerao.getDate() - 1);
-    
-    let fusoHorario = (data >= inicioVerao && data < fimVerao) ? 3 : 2;
-    data.setUTCHours(data.getUTCHours() + fusoHorario - 1); // Redução de 1 hora
-    
-    document.getElementById("date").innerHTML = `${semanas[data.getUTCDay()]}, ${data.getUTCDate()} ${meses[data.getUTCMonth()]}, ${data.getUTCFullYear()}`;
+
+    // Converte para horário da Índia
+    let offsetIST = 5.5 * 60; // minutos
+    data = new Date(data.getTime() + offsetIST * 60 * 1000);
+
+    // Obtém dia, mês e ano em híndi
+    let diaSemana = semanas[data.getDay()];
+    let dia = data.getDate();
+    let mes = meses[data.getMonth()];
+    let ano = data.getFullYear().toString().replace(/\d/g, d => "०१२३४५६७८९"[d]);
+
+    document.getElementById("date").innerHTML = `${diaSemana}, ${dia} ${mes}, ${ano}`;
 }
 
-// Atualiza a data à meia-noite na França
+
+// Atualiza a data automaticamente à meia-noite no horário da Índia
 function atualizarData() {
     let data = new Date();
-    // Adiciona 23 segundos
     data.setSeconds(data.getSeconds() + 18);
-    
-    let ano = data.getUTCFullYear();
-    let inicioVerao = new Date(ano, 2, 31);
-    while (inicioVerao.getDay() !== 0) inicioVerao.setDate(inicioVerao.getDate() - 1);
-    let fimVerao = new Date(ano, 9, 31);
-    while (fimVerao.getDay() !== 0) fimVerao.setDate(fimVerao.getDate() - 1);
-    
-    let fusoHorario = (data >= inicioVerao && data < fimVerao) ? 3 : 2;
-    data.setUTCHours(data.getUTCHours() + fusoHorario - 1); // Redução de 1 hora
-    
-    if (data.getUTCHours() === 0 && data.getUTCMinutes() === 0 && data.getUTCSeconds() === 0) {
+
+    let offsetIST = 5.5 * 60;
+    data = new Date(data.getTime() + offsetIST * 60 * 1000);
+
+    if (data.getHours() === 0 && data.getMinutes() === 0 && data.getSeconds() === 0) {
         exibirDataAtualizada();
     }
+
     setTimeout(atualizarData, 1000);
 }
 
-// Inicializa a data e a atualização automática
+// Inicialização
 exibirDataAtualizada();
 atualizarData();
